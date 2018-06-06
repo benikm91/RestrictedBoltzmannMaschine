@@ -26,6 +26,7 @@ All followining images had following models:
 ### Second Layer
 ![Second Layer](.documentation/Weights_in_second_Layer.png)
 ### Final Layer
+First column represents the visible unit for the hot encoded labels (here not clamped but set to label while training).
 ![Final Layer](.documentation/Weights_in_final_Layer.png)
 
 ## Generated numbers
