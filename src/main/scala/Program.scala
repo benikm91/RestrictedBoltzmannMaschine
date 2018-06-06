@@ -40,6 +40,7 @@ object Program {
     for (column <- weights(*, ::)) {
       val plot = f2.subplot(math.sqrt(weights.rows).toInt + 1, math.sqrt(weights.rows).toInt, index)
       plot.xaxis.setVisible(false)
+      plot.yaxis.setVisible(false)
       val gcd: Int = lala(column.length)
       plot += image(new DenseMatrix[Double](gcd,  column.length / gcd, column.toArray), offset = (-extreme, extreme))
       index += 1
@@ -110,23 +111,23 @@ object Program {
     val trainingDataRBM3 = getHiddenProp(rbm2, trainingDataRBM2)
     val rbm3 = loadOrTraing(args, trainingDataRBM3, 3, trainFinalLayer)
 
-    debugTrainedWeights(rbm.weights, "Weights_in_first_Layer")
-    debugTrainedWeights(rbm2.weights, "Weights_in_second_Layer")
-    debugTrainedWeights(rbm3.weights, "Weights_in_final_Layer")
+    //debugTrainedWeights(rbm.weights, "Weights_in_first_Layer")
+    //debugTrainedWeights(rbm2.weights, "Weights_in_second_Layer")
+    //debugTrainedWeights(rbm3.weights, "Weights_in_final_Layer")
 
-    for (j <- 0 to 9) {
-      val samples = for (i <- 0 until 12) yield {
-        val label = hotEncodeLabel(j.toByte).toArray
-        def clampLabels(visible: DenseMatrix[Double]): DenseMatrix[Double] = {
-            visible(0 until 10, 0) := new DenseVector(label)
-            visible
-          }
-        val visibleProp3 = rbm3.generateSample(50000, clampLabels)
-        val visibleProp2 = rbm2.calcHiddenStateToVisibleProbabilities(rbm2.weights, rbm2.visibleBias, visibleProp3(10 until 110, 0 to 0))
-        rbm.calcHiddenStateToVisibleProbabilities(rbm.weights, rbm.visibleBias, visibleProp2)
-      }
-      debugSamples(samples, s"Generated_samples_for_$j")
-    }
+//    for (j <- 0 to 9) {
+//      val samples = for (i <- 0 until 12) yield {
+//        val label = hotEncodeLabel(j.toByte).toArray
+//        def clampLabels(visible: DenseMatrix[Double]): DenseMatrix[Double] = {
+//            visible(0 until 10, 0) := new DenseVector(label)
+//            visible
+//          }
+//        val visibleProp3 = rbm3.generateSample(50000, clampLabels)
+//        val visibleProp2 = rbm2.calcHiddenStateToVisibleProbabilities(rbm2.weights, rbm2.visibleBias, visibleProp3(10 until 110, 0 to 0))
+//        rbm.calcHiddenStateToVisibleProbabilities(rbm.weights, rbm.visibleBias, visibleProp2)
+//      }
+//      debugSamples(samples, s"Generated_samples_for_$j")
+//    }
 
   }
 
@@ -144,7 +145,7 @@ object Program {
 
     val rbm = new RestrictedBoltzmannMachine(n_visible, n_hidden)
 
-    // debugTrainingData(trainingData)
+    debugTrainingData(trainingData.iterator)
 
     val trainingMiniBatches: Array[Array[(Byte, DenseMatrix[Double])]] = trainingData.grouped(100).toArray
 
