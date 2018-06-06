@@ -39,20 +39,26 @@ object Program {
     val extreme = max(weights).toInt + 1
     for (column <- weights(*, ::)) {
       val plot = f2.subplot(math.sqrt(weights.rows).toInt + 1, math.sqrt(weights.rows).toInt, index)
+      plot.xaxis.setVisible(false)
       val gcd: Int = lala(column.length)
       plot += image(new DenseMatrix[Double](gcd,  column.length / gcd, column.toArray), offset = (-extreme, extreme))
       index += 1
     }
-    f2.saveas("image.png")
+    f2.saveas(s".documentation/$title.png")
   }
 
-  def debugSample(value: DenseMatrix[Double]): Unit = {
+  def debugSamples(samples: Iterable[DenseMatrix[Double]], title: String): Unit = {
     val f2 = Figure()
-    val plot = f2.subplot(0)
-    val length = value.rows * value.cols
-    val gcd: Int = lala(length)
-    plot += image(new DenseMatrix[Double](gcd, length / gcd, value.toArray))
-    f2.saveas("image.png")
+    val size = samples.size
+    for ((sample, index) <- samples.zipWithIndex) {
+      val plot = f2.subplot(math.sqrt(size).toInt + 1, math.sqrt(size).toInt, index)
+      plot.xaxis.setVisible(false)
+      plot.yaxis.setVisible(false)
+      val length = sample.rows * sample.cols
+      val gcd: Int = lala(length)
+      plot += image(new DenseMatrix[Double](gcd, length / gcd, sample.toArray))
+    }
+    f2.saveas(s".documentation/$title.png")
   }
 
   private def getHiddenProp(rbm: RestrictedBoltzmannMachine, visibleData: Array[(Byte, DenseMatrix[Double])]) =
@@ -104,45 +110,23 @@ object Program {
     val trainingDataRBM3 = getHiddenProp(rbm2, trainingDataRBM2)
     val rbm3 = loadOrTraing(args, trainingDataRBM3, 3, trainFinalLayer)
 
-    debugTrainedWeights(rbm.weights, "First Layer")
-    debugTrainedWeights(rbm2.weights, "Second Layer")
-    debugTrainedWeights(rbm3.weights, "Final Layer")
+    debugTrainedWeights(rbm.weights, "Weights_in_first_Layer")
+    debugTrainedWeights(rbm2.weights, "Weights_in_second_Layer")
+    debugTrainedWeights(rbm3.weights, "Weights_in_final_Layer")
 
-    for (i <- 0 until 10) {
-
-      val label = hotEncodeLabel(9).toArray
-
-      def clampLabels(visible: DenseMatrix[Double]): DenseMatrix[Double]
-      = {
-        visible(0 until 10, 0) := new DenseVector(label)
-        visible
+    for (j <- 0 to 9) {
+      val samples = for (i <- 0 until 12) yield {
+        val label = hotEncodeLabel(j.toByte).toArray
+        def clampLabels(visible: DenseMatrix[Double]): DenseMatrix[Double] = {
+            visible(0 until 10, 0) := new DenseVector(label)
+            visible
+          }
+        val visibleProp3 = rbm3.generateSample(50000, clampLabels)
+        val visibleProp2 = rbm2.calcHiddenStateToVisibleProbabilities(rbm2.weights, rbm2.visibleBias, visibleProp3(10 until 110, 0 to 0))
+        rbm.calcHiddenStateToVisibleProbabilities(rbm.weights, rbm.visibleBias, visibleProp2)
       }
-
-      val visibleProp3 = rbm3.generateSample(50000, clampLabels)
-
-      val visibleProp2 = rbm2.calcHiddenStateToVisibleProbabilities(rbm2.weights, rbm2.visibleBias, visibleProp3(10 until 110, 0 to 0))
-      val image = rbm.calcHiddenStateToVisibleProbabilities(rbm.weights, rbm.visibleBias, visibleProp2)
-
-      debugSample(image)
-
+      debugSamples(samples, s"Generated_samples_for_$j")
     }
-
-//    val image = rbm.generateSample(10000)
-//    val image2_1 = rbm.generateSampleFromInput(trainingData3.head._2, 0)
-//    val image2_2 = rbm.generateSampleFromInput(trainingData3.head._2, 1)
-//    val image2 = rbm.generateSampleFromInput(trainingData3.head._2, 2)
-//    val image3 = rbm.generateSampleFromInput(trainingData3.head._2, 10)
-//    val image4 = rbm.generateSampleFromInput(trainingData3.head._2, 1000)
-//
-//    println("minW", rbm.weights(*, ::).map(min(_)).toArray.mkString(","))
-//    println("maxW", rbm.weights(*, ::).map(max(_)).toArray.mkString(","))
-//
-//    debugSample(image)
-//    debugSample(image2_1)
-//    debugSample(image2_2)
-//    debugSample(image2)
-//    debugSample(image3)
-//    debugSample(image4)
 
   }
 
