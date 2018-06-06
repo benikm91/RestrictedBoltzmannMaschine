@@ -3,7 +3,7 @@ RBM implemented with breeze.
 
 # What is this
 
-After completing [Geofrey Hintons Coursera ML Course](https://www.coursera.org/learn/neural-networks) I developed this hoppy application. I implemented the cd1 learning algorithm for Restricted Boltzman Maschines (RBM), stacked 3 RBMs and used them to generate number labels.
+After completing [Geofrey Hintons Coursera "Neural Networks for Machine Learning" course](https://www.coursera.org/learn/neural-networks) I developed this hoppy application. I implemented the cd1 learning algorithm for Restricted Boltzman Maschines (RBM), stacked 3 RBMs and used them to generate number labels.
 
 # Architecture
 
