@@ -11,11 +11,14 @@ All followining images had following models:
 
 ## Learned weights
 
+### First Layer
 ![First Layer](.documentation/Weights_in_first_Layer.png)
+### Second Layer
 ![Second Layer](.documentation/Weights_in_second_Layer.png)
+### Final Layer
 ![Final Layer](.documentation/Weights_in_final_Layer.png)
 
-## Generated numbers
+## Generated numbers
 
 ![0 generated](.documentation/Generated_samples_for_0.png)
 ![1 generated](.documentation/Generated_samples_for_1.png)
